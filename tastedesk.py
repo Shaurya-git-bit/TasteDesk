@@ -813,7 +813,7 @@ def page_agency(U):
 
 # ───────────────────────────── AGENT (Gemini plans, Qloo scores) ─────────────────────────────
 GEMINI_MODEL = "gemini-3.1-flash-lite"
-MAX_STEPS = 7
+MAX_STEPS = 12
 
 
 class AgentError(Exception):
