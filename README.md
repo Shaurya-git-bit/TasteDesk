@@ -86,7 +86,7 @@ The agent uses **Gemini 3.1 Flash-Lite** through the Gemini REST API with functi
 
 - Five tools wrap the app's own functions: `find_talent_for_brand`, `find_brands_for_talent`, `underwrite_pair`, `audience_segments` and `find_taste_twins`.
 - The system prompt requires that every score come from a tool result and that missing data is reported as "not enough data".
-- The loop runs up to 7 steps at temperature 0.2. The tool calls show live in the UI, then Gemini writes a short verdict, a table and one risk note.
+- The loop runs up to 12 steps at temperature 0.2. The tool calls show live in the UI, then Gemini writes a short verdict, a table and one risk note.
 - If the step limit is reached, the agent is asked to write the answer from the data it already gathered.
 
 ## Repo structure
