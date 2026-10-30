@@ -4,21 +4,42 @@
 
 ## The problem
 
-Brands spend millions on celebrity deals. Most of those picks are made on follower counts, gut feel and who the agent knows. When the star's fans do not care about the brand, the whole campaign budget is wasted, and nobody sees it coming.
+When a brand signs a celebrity, it is betting that the celebrity's fans will also like the brand. If they do, the campaign works. If they don't, the money is gone, and by the time anyone finds out the contract is already signed.
+
+Today that bet is mostly made on weak signals: follower counts, how famous the star is, a gut feeling, or who the agent happens to know. Follower count tells you how many people watch a star. It does not tell you whether those people care about your product. Two stars with the same following can have fans with completely different tastes.
+
+The same blind spot hurts the other side of the deal:
+
+- **Brands** do not know which star's audience actually over-indexes on their product.
+- **Talent agencies** do not know which brands to pitch for a client, so they pitch the obvious ones.
+- **Ad agencies** have no clear evidence to show a client before the money is spent.
+- Everyone is stuck when a star becomes too expensive, is already signed by a rival, or runs into a scandal, because nobody has a ranked backup ready.
 
 ## The solution
 
-TasteDesk turns that decision into a number. Type a celebrity and a brand and get a Cultural Fit Score from 0 to 100, computed live from Qloo's taste graph. It also shows which age and gender segments drive the fit, where the audience lives in a city, and who the star's taste twins are if you need a backup. A Gemini agent lets you ask for all of it in plain English.
+TasteDesk replaces the guess with a number. It measures how well a celebrity's fans already match a brand, using Qloo's taste graph, which tracks what people love across brands, music, film, TV and places.
+
+Type a celebrity and a brand, and TasteDesk returns:
+
+- **A Cultural Fit Score from 0 to 100.** It shows how strongly the star's fans point at this brand compared with 50 other brands. For example, Aveeno scores 100 for Jennifer Aniston's fans.
+- **How unusual that fit is.** It is compared with other celebrity audiences, so a brand that everyone likes does not win by default.
+- **Who is driving it.** The score is split by age group and gender.
+- **Where they are.** A city map shows where that audience lives.
+- **Taste twins.** These are the stars whose fans share the same taste, each scored for your brand. They work as ranked backups when the first choice is too expensive, already signed, or no longer an option.
+
+You can also work the other way around. Enter a brand and get a ranked list of celebrities to sign, or enter a celebrity and get a list of brands to pitch. Or skip the forms and describe the deal in plain English, such as "We are Hyundai. Which celebrity should we sign?" A Gemini agent plans the steps and calls Qloo for every number.
+
+The result is a clear, scored answer to the question every endorsement deal starts with: do this star's fans already love this brand?
 
 ## Why Qloo is necessary
 
 Every number in TasteDesk comes from Qloo. Gemini only plans the steps and writes the summary. Take Qloo out and the app breaks:
 
-- **No Fit Score:** there is no measure of how strongly a star's fans point at a brand.
-- **No audience lift:** there are no other celebrity audiences to compare against.
-- **No segments or city map:** there is no age or gender split and no heatmap.
-- **No taste twins:** there is no lookalike graph to find the backup stars.
-- **No agent answers:** the agent's tools all call Qloo, so it would only have guesses to write about.
+- **No Fit Score.** To say Aveeno fits Jennifer Aniston's fans, you have to measure how strongly their taste points at Aveeno compared with 50 other brands. Only Qloo holds that taste data. Without it there is no score, only an opinion.
+- **No audience lift.** Lift shows whether a result is unusual or just a brand everyone likes. It needs the taste of 34 other celebrity audiences to compare against, and all of them come from Qloo.
+- **No segments or city map.** The age and gender split and the heatmap come straight from Qloo's demographic and location signals. Without Qloo you cannot say who is driving the fit or where those fans live.
+- **No taste twins.** Twins come from Qloo's lookalike graph, which finds stars whose fans share the same taste, and each twin is then scored for your brand. Without it you would only get a list of famous names in the same genre, and no way to rank them for a brand.
+- **No agent answers.** All five of the agent's tools call Qloo. Gemini plans the steps and writes the summary, but without Qloo's numbers it would have nothing to base a recommendation on except guesses.
 
 A plain LLM can guess that Aveeno fits Jennifer Aniston. It cannot measure her fans' taste against 50 brands and 34 celebrity audiences, split that by age and gender, and find her twins.
 
@@ -54,24 +75,44 @@ Qloo endpoints used:
 
 ## Evidence
 
-### Validation tests (notebook pipeline, `TestDeck.py`)
+### Validation tests (notebook pipeline, `tastedesk.ipynb`)
 
-**Test A: do real signed deals score high?**
-We collected publicly documented celebrity and brand deals (founder deals and endorsements). The pipeline resolved 135 celebrities and about 194 brands in Qloo and scored all 25,785 celebrity x brand pairs (about 1,650 API calls). For each deal, we checked where the real brand ranks inside that celebrity's own row of brands. 50% would be chance.
+### Test A: do real signed deals score high?
 
-- 53 deals were usable. Average percentile: **0.749**, meaning the real deal brand outranks about 75% of the other brands.
-- **27 of 53** deals landed in the top 10% of their celebrity's row, about **5x chance**.
-- After removing brand popularity (per-brand z-scores), the deal-versus-non-deal AUC was **0.775**.
-- Endorsement deals (n=19): **0.902**. Founder deals (n=34): **0.663**.
-- The same pair returned the same score on five repeat calls.
-- Top hits: Ryan Reynolds x Aviation Gin ranked #1. Kim Kardashian x SKIMS, Kylie Jenner x Kylie Cosmetics, Tom Brady x TB12, Metallica x Blackened Whiskey, Reese Witherspoon x Draper James and Dwayne Johnson x Teremana also scored high.
+**What it tests.** The Fit Score is only useful if it points at deals that actually happened. This test checks whether Qloo ranks a star's real brand partners above the brands they have no known deal with. If the score were meaningless, a real deal would land in the middle of the pack, at a 50% percentile.
 
-**Test B: do Taste Twins hold up?**
-For 75 celebrities with documented deals, we pulled Qloo's lookalikes (5 people and 5 artists each), then compared them with random stars as controls. 73 celebrities were usable, with 708 twin rows in total.
+**How it was run.**
+- We collected publicly documented deals: founder deals (Ryan Reynolds and Aviation Gin) and paid endorsements (Jennifer Aniston and Aveeno).
+- The pipeline resolved 135 celebrities and about 194 brands in Qloo, then scored every celebrity x brand pair. That is 25,785 scored pairs from about 1,650 API calls.
+- For each deal, we looked at the star's own row of brands and checked where the real partner brand ranks. A percentile of 0.90 means the real brand beats 90% of the other brands.
+- A second check removes the "everyone likes Nike" effect. Each brand is z-scored across all celebrities, so the test asks whether a real deal stands out for that star specifically, not just for being a popular brand.
 
-- **Taste agreement:** twins share the star's brand taste at **0.73** (Spearman correlation) versus **0.43** for random stars. The gap is +0.31 with a 95% range of +0.26 to +0.35. Twins won for **67 of 73** celebrities.
-- **Deal transfer:** the star's real deal brand ranks at the **0.66** percentile for the twins versus **0.50** for random stars (the star herself: 0.74). The gap is +0.16 with a 95% range of +0.11 to +0.21. Twins won on **44 of 56** deals.
-- In **40 of 56** deals, at least one twin landed in the top 10% for the same brand (31 of 56 for random controls).
+**Results (53 deals usable).**
+- **Average percentile 0.749.** The real deal brand outranks about 75% of the other brands, against 50% by chance.
+- **27 of 53 deals landed in the top 10%** of their celebrity's row. By chance, about 5 would. That is about 5x chance.
+- **AUC 0.775 after removing brand popularity.** AUC is the odds that a random real deal scores higher than a random non-deal pair. 0.5 is a coin flip and 1.0 is perfect.
+- **Endorsements scored 0.902 (n=19), founder deals 0.663 (n=34).** Paid endorsements are the strongest match with the Fit Score.
+- **Stable.** The same pair returned the same score on five repeat calls.
+- **Top hits:** Ryan Reynolds x Aviation Gin ranked #1 for his audience. Kim Kardashian x SKIMS, Kylie Jenner x Kylie Cosmetics, Tom Brady x TB12, Metallica x Blackened Whiskey, Reese Witherspoon x Draper James and Dwayne Johnson x Teremana also scored high.
+
+### Test B: do Taste Twins hold up?
+
+**What it tests.** Taste Twins are meant to be usable backups. That only holds if a twin's fans really share the star's taste, and if the star's brand deal also fits the twin. This test checks both, using random stars as the baseline.
+
+**How it was run.**
+- For 75 celebrities with documented deals, we pulled Qloo's lookalikes: 5 people and 5 artists each. 73 celebrities were usable, giving 708 twin rows.
+- Every twin and every star was scored against a panel of 99 brands.
+- Random controls were lookalikes of other celebrities, so each comparison was twin against random star.
+
+**Check 1: taste agreement.** For each celebrity, we measured how closely each twin's brand ranking matches the star's (Spearman rank correlation, where 1.0 is identical order and 0 is unrelated).
+- Twins match the star at **0.73**, against **0.43** for random stars.
+- The gap is **+0.31**, with a 95% range of +0.26 to +0.35.
+- Twins beat the random stars for **67 of 73** celebrities.
+
+**Check 2: does the deal transfer?** We took each star's real deal brand and checked where it ranks in the twins' own brand lists.
+- The deal brand sits at the **0.66** percentile for twins, against **0.50** for random stars. For the star herself it is 0.74.
+- The gap is **+0.16**, with a 95% range of +0.11 to +0.21. Twins beat the random stars on **44 of 56** deals.
+- In **40 of 56** deals, at least one twin ranked the deal brand in its top 10%. Random controls managed 31 of 56.
 
 ### Live app tests
 
@@ -129,7 +170,16 @@ Try it: [[LIVE_APP_URL]](https://taste-desk.streamlit.app/)
 
 ## Who it helps
 
-Talent agencies get a pitch list backed by evidence instead of a guess. Brand teams get a shortlist with a number, a segment and a backup before they negotiate. Ad agencies get a one-page dossier they can hand to a client. The same engine can later cover venture launches and sponsorships. We do not claim it predicts sales. It tells you how well a star's fans already match your brand, which is the question these deals start from.
+Celebrity deals run into millions, and until now the first question in every one of them, do this star's fans actually love this brand, was answered by instinct. TasteDesk answers it with a number.
+
+- **Brand teams** walk into the negotiation with a ranked shortlist, the segment driving each fit, and a backup already scored. No more paying for a famous name and hoping.
+- **Talent agencies** stop pitching the obvious brands. Every client gets a pitch list built from what their fans love, with the evidence to back each call.
+- **Ad agencies** hand clients a one-page dossier with the score, the audience split and the city map, before a single dollar is committed.
+- **Everyone** gets a ranked plan B. When a star is too expensive, already signed by a rival, or caught in a scandal, the swap is already scored.
+
+The same engine extends to celebrity venture launches and sponsorships, wherever money is about to meet an audience.
+
+TasteDesk does not predict sales. It measures how well a star's fans already match your brand, which is the bet behind every endorsement. That measurement has been missing from the table, and now it is one search away.
 
 ## Limitations
 
