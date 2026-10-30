@@ -2,9 +2,25 @@
 
 **Know the fit before the check is written.**
 
-Live demo: [[LIVE_APP_URL]](https://taste-desk.streamlit.app/)
+## The problem
 
-Brands spend millions on celebrity deals, and most of them pick the star by gut feel and follower counts. TasteDesk gives them a number first. Type a celebrity and a brand, and it returns a Cultural Fit Score from 0 to 100, computed live from Qloo's taste graph. It also shows which age and gender segments drive the fit, where the audience lives in a city, and who the star's taste twins are if you need a backup.
+Brands spend millions on celebrity deals. Most of those picks are made on follower counts, gut feel and who the agent knows. When the star's fans do not care about the brand, the whole campaign budget is wasted, and nobody sees it coming.
+
+## The solution
+
+TasteDesk turns that decision into a number. Type a celebrity and a brand and get a Cultural Fit Score from 0 to 100, computed live from Qloo's taste graph. It also shows which age and gender segments drive the fit, where the audience lives in a city, and who the star's taste twins are if you need a backup. A Gemini agent lets you ask for all of it in plain English.
+
+## Why Qloo is necessary
+
+Every number in TasteDesk comes from Qloo. Gemini only plans the steps and writes the summary. Take Qloo out and the app breaks:
+
+- **No Fit Score:** there is no measure of how strongly a star's fans point at a brand.
+- **No audience lift:** there are no other celebrity audiences to compare against.
+- **No segments or city map:** there is no age or gender split and no heatmap.
+- **No taste twins:** there is no lookalike graph to find the backup stars.
+- **No agent answers:** the agent's tools all call Qloo, so it would only have guesses to write about.
+
+A plain LLM can guess that Aveeno fits Jennifer Aniston. It cannot measure her fans' taste against 50 brands and 34 celebrity audiences, split that by age and gender, and find her twins.
 
 ## What it does
 
@@ -19,7 +35,7 @@ TasteDesk has four entry points:
 
 ## Why it is Qloo-powered
 
-An LLM can guess that Aveeno fits Jennifer Aniston. It cannot measure how strongly her fans' taste points at Aveeno compared with 50 other brands and 34 other celebrity audiences, split that by age and gender, map it by city, and find her taste twins. That comes from Qloo's taste graph. Every score in the app is a Qloo result. Without Qloo there is nothing to compute.
+An LLM can guess that Aveeno fits Jennifer Aniston. It cannot measure how strongly her fans' taste points at Aveeno compared with 50 other brands and 34 celebrity audiences, split that by age and gender, map it by city, and find her taste twins. That comes from Qloo's taste graph. Every score in the app is a Qloo result. Without Qloo there is nothing to compute.
 
 Qloo endpoints used:
 
@@ -105,7 +121,7 @@ assets/            screenshots used in this README
 
 On first load, the app builds a comparison matrix: 36 celebrity audiences x 50 reference brands (34 celebrity audiences resolved when we tested), scored through Qloo. This takes about 30 seconds and is cached on the server for later visits. After that, any celebrity or brand you type is scored live. A brand outside the 50 costs about 36 extra Qloo calls, and a new celebrity costs 2.
 
-To run it yourself:
+Try it: [[LIVE_APP_URL]](https://taste-desk.streamlit.app/)
 
 1. `pip install -r requirements.txt`
 2. Set `QLOO_API_KEY` and `GEMINI_API_KEY` as Streamlit secrets or environment variables.
