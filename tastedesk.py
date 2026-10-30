@@ -928,8 +928,8 @@ SYSTEM = (
     "audience_segments for the top 2-3. For a talent brief call find_brands_for_talent, then underwrite_pair for "
     "the top 2-3. For a pair call underwrite_pair, audience_segments and find_taste_twins (backup talent). If a tool returns an error, say "
     "'not enough data' for that item and move on. Final answer: a 2-line verdict, a markdown table of up to 5 "
-    "options (name, fit score or audience lift, best segment), and one risk or caveat. Plain language, no hype, "
-    "under 220 words."
+    "options (name, fit score or audience lift, best segment), and one risk or caveat. Plain language, "
+    "under 400 words."
 )
 
 
