@@ -97,7 +97,7 @@ LICENSE            MIT license
 README.md          this file
 requirements.txt   streamlit, pandas, pydeck, requests
 tastedesk.py       the Streamlit app (UI, Qloo client, scoring, Taste Twins, Gemini agent)
-TestDeck.py        validation pipeline that produced the Test A and Test B results
+tastedesk.ipynb    validation pipeline that produced the Test A and Test B results using Qloo
 assets/            screenshots used in this README
 ```
 
