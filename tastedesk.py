@@ -837,7 +837,7 @@ def tool_talent_for_brand(U, brand):
     if not b:
         return {"error": f"'{brand}' not found in Qloo"}
     col = column(U, b["id"])
-    vals = list(col.values())n
+    vals = list(col.values())
     zs = zstats(vals)
     if not zs:
         return {"error": "too few audience scores for this brand"}
